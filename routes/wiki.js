@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { addPage } = require("../views");
+const { addPage, wikiPage, main } = require("../views");
 const { Page } = require("../models");
 
 router.post("/", async (req, res, next) => {
@@ -9,23 +9,30 @@ router.post("/", async (req, res, next) => {
       content: req.body.content,
       status: req.body.status,
     });
-    res.redirect("/");
+    res.redirect(`/wiki/${page.slug}`);
   } catch (error) {
     next(error);
   }
 });
 
-router.get("/", (req, res, next) => {
-  res.send("get /wiki working");
+router.get("/", async (req, res, next) => {
+  const pages = await Page.findAll();
+  res.send(main(pages));
 });
-
-// router.post("/", (req, res, next) => {
-//   res.json(req.body);
-//   //res.send("post /wiki working");
-// });
 
 router.get("/add", (req, res, next) => {
   res.send(addPage());
+});
+
+router.get("/:slug", async (req, res, next) => {
+  try {
+    const page = await Page.findOne({
+      where: { slug: req.params.slug },
+    });
+    res.send(wikiPage(page));
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
