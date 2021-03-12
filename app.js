@@ -22,9 +22,9 @@ app.get("/", (req, res, next) => {
 });
 
 const connect = async () => {
-  await db.sync({ force: true }); //will sync model to the database instance we created with seq
-  // await Page.sync();
-  // await User.sync();
+  await db.sync(); //will sync model to the database instance we created with seq
+  // await db.sync({ force: true });
+
   app.listen(3000, () => {
     console.log("I am listening at http://localhost:3000");
   });
